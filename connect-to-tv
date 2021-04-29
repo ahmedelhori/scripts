@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# Author:				Ahmed Elhori <ahmed@elhori.com>
+# License:			GNU GPLv3
+# Description:	Fix Samsung 4k tv HDMI connection
+
+xrandr --output HDMI1 --set audio force-dvi --mode 1920x1080 --same-as eDP1

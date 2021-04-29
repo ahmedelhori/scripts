@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Author:				Ahmed Elhori <ahmed@elhori.com>
+# License:			GNU GPLv3
+# Description:	Toggle my compositor
+
+if pgrep -x picom; then
+	pkill picom
+else
+	picom -b
+fi

@@ -1,0 +1,44 @@
+#!/bin/sh
+
+# Author:				Ahmed Elhori <ahmed@elhori.com>
+# License:			GNU GPLv3
+# Description:	Open video link with youtube-dl and mpv
+
+get_quality(){
+	quality="$(\
+		youtube-dl --list-formats -- "$1" | \
+		sed -n '/format code.*resolution/,$p' | \
+		sed -n '/audio only/!p' | \
+		tail -n +2 | \
+		tac | \
+		dmenu -p 'Choose Video Quality' -i -l 10)"
+
+	quality_code="$(\
+		printf "$quality" | \
+		sed -n 's/^\([^ ]*\).*$/\1/p')"
+
+	printf "$quality_code"
+}
+
+main(){
+	choice=$( printf 'Best\nOptions\nBrowser' | dmenu -p 'Choose' -i)
+
+	case "$choice" in
+		Browser) ""$PRIVATE_BROWSER" "$1"" && return 0;;
+		Options) quality="$(get_quality "$1")";;
+		*) quality="$choice";;
+	esac
+
+	if [ -z "$quality" ]; then
+		echo 'quality not selected' >&2
+		return 1
+	fi
+
+	message=$(mpv --hwdec=auto --ytdl-format="$quality"+bestaudio/best --af=scaletempo2 "$1")
+
+	if [ "$?" != '0' ]; then
+		notify-send 'Error' "$message"
+	fi
+}
+
+main "$1"

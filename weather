@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# Author:				Ahmed Elhori <ahmed@elhori.com>
+# License:			GNU GPLv3
+# Description:	Check weather
+
+DEFAULT_LOCATION='Duesseldorf'
+
+location="$(printf 'Default\nDuesseldorf\nLibya\nTunisia' | dmenu -p 'Choose location' -i -l 10)"
+
+if [ "$location" = 'Default' ]; then
+	location="$DEFAULT_LOCATION"
+else
+	view="$(printf 'Narrow\nFull' | dmenu -p 'Choose view' -i -l 10)"
+	case "$view" in
+		'Narrow') view_code='?n';;
+		'Full') view_code='';;
+	esac
+fi
+
+querry="${location}${view_code}"
+if [ -z "$querry" ]; then
+	querry='?n&lang=de'
+else
+	querry="${querry}&lang=de"
+fi
+
+"$TERMINAL" -e bash -c "curl wttr.in/"${querry}" && sleep 1000"

@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Author:				Ahmed Elhori <ahmed@elhori.com>
+# License:			GNU GPLv3
+# Description:	Change keyboard layout
+
+# Prepare
+MAIN_LAYOUT=eu
+SEC_LAYOUT=ara
+
+if setxkbmap -query | grep -q "^layout:\s*$MAIN_LAYOUT"; then
+	setxkbmap -layout $SEC_LAYOUT
+	echo $SEC_LAYOUT
+else
+	setxkbmap -layout $MAIN_LAYOUT
+	echo $MAIN_LAYOUT
+fi

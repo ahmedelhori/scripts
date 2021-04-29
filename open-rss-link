@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Author:				Ahmed Elhori <ahmed@elhori.com>
+# License:			GNU GPLv3
+# Description:	Open rss link
+
+# ENV
+NAME="$(basename $0)"
+
+[ -z "$1" ] && echo "Usage: $NAME <link>" && exit 1
+
+main(){
+	case "$1" in
+		*youtube.com/watch\?v=*) i3-msg "exec open-video-link "$1"";;
+		*odysee.com/@*/*) i3-msg "exec open-video-link "$1"";;
+		*) i3-msg "exec ""$PRIVATE_BROWSER" "$1""";;
+	esac
+}
+
+main "$1"
