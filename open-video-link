@@ -1,10 +1,38 @@
 #!/bin/sh
 
-# Author:				Ahmed Elhori <ahmed@elhori.com>
-# License:			GNU GPLv3
-# Description:	Open video link with youtube-dl and mpv
+# Author:       Ahmed Elhori <dev@elhori.com>
+# License:      GNU GPLv3
+# Description:  Open video link with youtube-dl and mpv
 
-get_quality(){
+check_dependency(){
+	dep_missing=0
+	for x in "$@"; do
+		if ! which "$x" >/dev/null 2>&1; then
+			echo "$NAME - Error: $x not installed"
+			dep_missing=1
+		fi
+	done
+
+	if [ "$dep_missing" -ne '0' ]; then
+		exit 1
+	fi
+}
+
+prepare(){
+	# Set script name
+	NAME="$(basename $0)"
+
+	# Set correct browser
+	if [ "$PRIVATE_BROWSER" ]; then
+		browser="$PRIVATE_BROWSER"
+	elif [ "$BROWSER" ]; then
+		browser="$BROWSER"
+	else
+		browser="$(basename "$(xdg-mime query default text/html)" .desktop)"
+	fi
+}
+
+get_video_quality(){
 	quality="$(\
 		youtube-dl --list-formats -- "$1" | \
 		sed -n '/format code.*resolution/,$p' | \
@@ -20,12 +48,21 @@ get_quality(){
 	printf "$quality_code"
 }
 
-main(){
-	choice=$( printf 'Best\nOptions\nBrowser' | dmenu -p 'Choose' -i)
+open_browser(){
+	# Open using window manager if available
+	if which i3 >/dev/null 2>&1; then
+		i3-msg "exec $browser $1" >/dev/null 2>&1 &
+	else
+		nohup "$browser" -- "$1" >/dev/null 2>&1 &
+	fi
+}
+
+run(){
+	choice="$( printf 'Best\nOptions\nBrowser' | dmenu -p 'Choose' -i)"
 
 	case "$choice" in
-		Browser) ""$PRIVATE_BROWSER" "$1"" && return 0;;
-		Options) quality="$(get_quality "$1")";;
+		Browser) open_browser "$1"; return 0;;
+		Options) quality="$(get_video_quality $1)";;
 		*) quality="$choice";;
 	esac
 
@@ -34,11 +71,18 @@ main(){
 		return 1
 	fi
 
-	message=$(mpv --hwdec=auto --ytdl-format="$quality"+bestaudio/best --af=scaletempo2 "$1")
+	message="$(mpv --hwdec=auto --ytdl-format=$quality+bestaudio/best --af=scaletempo2 $1)"
 
 	if [ "$?" != '0' ]; then
 		notify-send 'Error' "$message"
 	fi
 }
 
-main "$1"
+
+main(){
+	check_dependency 'mpv' 'youtube-dl' 'dmenu' 'xdg-open'
+	prepare "$@"
+	run "$@"
+}
+
+main "$@"

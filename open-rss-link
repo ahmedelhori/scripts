@@ -1,20 +1,56 @@
 #!/bin/sh
 
-# Author:				Ahmed Elhori <ahmed@elhori.com>
-# License:			GNU GPLv3
-# Description:	Open rss link
+# Author:       Ahmed Elhori <dev@elhori.com>
+# License:      GNU GPLv3
+# Description:  Open rss link
 
-# ENV
-NAME="$(basename $0)"
+check(){
+	# Check arguments
+	if [ -z "$1" ]; then
+		printf "Usage: $NAME <link>" >&2
+		exit 1
+	fi
+}
 
-[ -z "$1" ] && echo "Usage: $NAME <link>" && exit 1
+prepare(){
+	# Set script name
+	NAME="$(basename $0)"
 
-main(){
+	# Set correct browser
+	if [ "$PRIVATE_BROWSER" ]; then
+		browser="$PRIVATE_BROWSER"
+	elif [ "$BROWSER" ]; then
+		browser="$BROWSER"
+	else
+		browser="$(basename $(xdg-mime query default text/html) .desktop)"
+	fi
+}
+
+run(){
 	case "$1" in
-		*youtube.com/watch\?v=*) i3-msg "exec open-video-link "$1"";;
-		*odysee.com/@*/*) i3-msg "exec open-video-link "$1"";;
-		*) i3-msg "exec ""$PRIVATE_BROWSER" "$1""";;
+		*youtube.com/watch\?v=*) open_video "$1";;
+		*odysee.com/@*/*) open_video "$1";;
+		*) open_browser "$1";;
 	esac
 }
 
-main "$1"
+open_video(){
+	nohup open-video-link "$1" >/dev/null 2>&1 &
+}
+
+open_browser(){
+	# Open using window manager if available
+	if which i3 >/dev/null 2>&1; then
+		i3-msg "exec $browser $1" >/dev/null 2>&1 &
+	else
+		nohup "$browser" -- "$1" >/dev/null 2>&1 &
+	fi
+}
+
+main(){
+	check "$@"
+	prepare "$@"
+	run "$@"
+}
+
+main "$@"

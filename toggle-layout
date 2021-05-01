@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# Author:				Ahmed Elhori <ahmed@elhori.com>
-# License:			GNU GPLv3
-# Description:	Change keyboard layout
+# Author:       Ahmed Elhori <dev@elhori.com>
+# License:      GNU GPLv3
+# Description:  Change keyboard layout
 
 # Prepare
 MAIN_LAYOUT=eu

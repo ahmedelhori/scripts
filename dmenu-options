@@ -1,15 +1,15 @@
 #!/bin/sh
 
-# Author:				Ahmed Elhori <ahmed@elhori.com>
-# License:			GNU GPLv3
-# Description:	Select script through dmenu
+# Author:       Ahmed Elhori <dev@elhori.com>
+# License:      GNU GPLv3
+# Description:  Select a script through dmenu
 
 script="$(\
-	cat <<- EOF | dmenu -l 10
+	cat <<- EOF | dmenu -i -l 10
 	weather
 	toggle-picom
 	connect-to-tv
 EOF
 )"
 
-$script
+"$script"
