@@ -30,6 +30,7 @@ run(){
 	case "$1" in
 		*youtube.com/watch\?v=*) open_video "$1";;
 		*odysee.com/@*/*) open_video "$1";;
+		*video*.*) open_video "$1";;
 		*) open_browser "$1";;
 	esac
 }
@@ -41,7 +42,7 @@ open_video(){
 open_browser(){
 	# Open using window manager if available
 	if which i3 >/dev/null 2>&1; then
-		i3-msg "exec $browser $1" >/dev/null 2>&1 &
+		i3-msg "exec --no-startup-id $browser $1" >/dev/null 2>&1 &
 	else
 		nohup "$browser" -- "$1" >/dev/null 2>&1 &
 	fi

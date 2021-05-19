@@ -51,7 +51,7 @@ get_video_quality(){
 open_browser(){
 	# Open using window manager if available
 	if which i3 >/dev/null 2>&1; then
-		i3-msg "exec $browser $1" >/dev/null 2>&1 &
+		i3-msg "exec --no-startup-id $browser $1" >/dev/null 2>&1 &
 	else
 		nohup "$browser" -- "$1" >/dev/null 2>&1 &
 	fi
