@@ -6,9 +6,10 @@
 
 script="$(\
 	cat <<- EOF | dmenu -i -l 10
+	toggle-compositor
+	toggle-eq
+	toggle-screenkey
 	weather
-	toggle-picom
-	connect-to-tv
 EOF
 )"
 

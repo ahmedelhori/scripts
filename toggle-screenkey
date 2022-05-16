@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Author:       Ahmed Elhori <dev@elhori.com>
+# License:      GNU GPLv3
+# Description:  Toggle screenkey
+
+if pgrep screenkey; then
+	pkill screenkey
+	return
+fi
+
+screenkey --font-size small --opacity 0.5 --persist --compr-cnt 1

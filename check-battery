@@ -1,0 +1,11 @@
+#!/bin/sh
+
+export DISPLAY=:0
+export XDG_RUNTIME_DIR=/run/user/$(id -u)
+
+capacity="$(cat /sys/class/power_supply/BAT0/capacity)"
+charging_status="$(cat /sys/class/power_supply/BAT0/status)"
+
+if [ "$capacity" -lt '5' ] && [ "$charging_status" = 'Discharging' ]; then
+	notify-send 'Battery low' -u critical
+fi

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+for x in *; do
+	if [ -d "$x" ] && [ -d "$x"/.git ]; then
+		cd "$x"
+		pwd
+		if [ -z "$@" ]; then
+			git status -s
+		else
+			git "$@"
+		fi
+		echo -------------------------
+		cd ..
+	fi
+done

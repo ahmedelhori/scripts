@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Author:       Ahmed Elhori <dev@elhori.com>
+# License:      GNU GPLv3
+# Description:  Toggle compositor
+
+if pgrep -x xcompmgr; then
+	pkill xcompmgr
+	return
+fi
+
+xcompmgr -c -C -t-5 -l-5 -r4.2 -o.55

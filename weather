@@ -4,26 +4,18 @@
 # License:      GNU GPLv3
 # Description:  Check weather
 
-DEFAULT='Duesseldorf'
+get_locaiton(){
+	# If "$DISPLAY" not set read stdin instead
+	location="$(printf '' | dmenu -p 'Enter location' -i -l 5)"
+}
 
-location="$(printf 'Default\nDuesseldorf\nLibya\nTunisia' | dmenu -p 'Choose location' -i -l 10)"
+run(){
+	"$TERMINAL" -e sh -c 'curl -L https://wttr.in/'"${location}"' && sleep 1000000'
+}
 
-if [ "$location" = 'Default' ]; then
-	location="$DEFAULT"
-	view_code='?n'
-else
-	view="$(printf 'Narrow\nFull' | dmenu -p 'Choose view' -i -l 10)"
-	case "$view" in
-		'Narrow') view_code='?n';;
-		'Full') view_code='';;
-	esac
-fi
+main(){
+	get_locaiton
+	run
+}
 
-querry="${location}${view_code}"
-if [ -z "$querry" ]; then
-	querry='?n&lang=de'
-else
-	querry="${querry}&lang=de"
-fi
-
-"$TERMINAL" -e bash -c "curl wttr.in/"${querry}" && sleep 1000"
+main "$@"
